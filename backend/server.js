@@ -4,7 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { generateRecipe } from './gemini.js'; // ✅ NEW import here
+import { generateRecipe, getFinanceAdvice } from './gemini.js'; // ✅ NEW import here
 
 dotenv.config();
 
@@ -45,6 +45,35 @@ app.post('/recipe', async (req, res) => {
   } catch (err) {
     console.error('Recipe Generation Error:', err.message);
     res.status(500).json({ error: 'Failed to generate recipe.' });
+  }
+});
+
+
+// 🔥 Financial Budget Advice Endpoint
+app.post('/budget-advice', async (req, res) => {
+  try {
+    const { annualIncome, monthlySpending } = req.body;
+    if (!annualIncome || !monthlySpending) {
+      return res.status(400).json({ error: 'annualIncome and monthlySpending are required.' });
+    }
+
+    console.log(annualIncome);
+    console.log(monthlySpending);
+
+    const rawResponse = await getFinanceAdvice(annualIncome, monthlySpending);
+    const cleaned = cleanJSON(rawResponse);
+    const parsed = JSON.parse(cleaned);
+
+    console.log(rawResponse);
+
+    res.json({
+      income: annualIncome,
+      spending: monthlySpending,
+      advice: parsed
+    });
+  } catch (err) {
+    console.error('Budget Advice Error:', err.message);
+    res.status(500).json({ error: 'Failed to generate financial advice.' });
   }
 });
 

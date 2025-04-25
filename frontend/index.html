@@ -47,6 +47,13 @@
         🍳 Get Recipe
       </button>
     </div>
+
+<br>
+    <input id="incomeInput" type="text" placeholder="Annual Income (e.g. 75000 AUD)" class="w-full px-4 py-3 rounded-full bg-white/40 backdrop-blur-md text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-white-400 transition" ><br>
+<input id="spendingInput" type="text" placeholder="Monthly Spending (e.g. 3000 AUD)" class="w-full px-4 py-3 rounded-full bg-white/40 backdrop-blur-md text-black placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-white-400 transition" ><br><br>
+<button onclick="fetchFinance()" class="w-full py-3 rounded-full bg-[#ff8b94] hover:bg-[#ff6f69] text-white font-bold transition">Get Spending Advice</button>
+<div id="financeOutput" class="mt-6"></div>
+
   </div>
 
   <!-- Right Panel -->

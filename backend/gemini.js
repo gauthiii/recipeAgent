@@ -33,3 +33,43 @@ export async function generateRecipe(foodItem) {
     throw err;
   }
 }
+
+
+export async function getFinanceAdvice(income, spending) {
+  const axios = (await import('axios')).default;
+
+  const prompt = `
+You are a responsible financial planning assistant. Based on the provided details:
+
+- Annual Income: ${income} AUD
+- Monthly Spending: ${spending} AUD
+
+Please suggest:
+1. A practical **daily spending limit** to manage regular expenses comfortably.
+2. A reasonable **monthly investment amount** to promote financial growth, assuming no major debts.
+
+Provide the result in **clean JSON** format like:
+{
+  "dailySpendingLimit": "<amount in AUD>",
+  "recommendedMonthlyInvestment": "<amount in AUD>"
+  "reason": "<2 line summary>"
+}
+
+Do not include any explanations or markdown. This is purely for **educational and illustrative purposes** and should not be considered financial advice.
+`;
+
+  try {
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
+      },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    return response.data?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  } catch (err) {
+    console.error('Gemini API Error:', err?.response?.data || err.message);
+    throw err;
+  }
+}

@@ -50,3 +50,58 @@ async function fetchRecipe() {
     }
   }
   
+
+
+  async function fetchFinance() {
+    const income = document.getElementById('incomeInput').value.trim();
+    const spending = document.getElementById('spendingInput').value.trim();
+    const financeOutput = document.getElementById('financeOutput');
+  
+    if (!income || !spending) {
+      alert('Please enter both income and monthly spending.');
+      return;
+    }
+  
+    // Show loading spinner
+    financeOutput.innerHTML = `
+      <div class="flex justify-center items-center h-48">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      </div>
+    `;
+  
+    try {
+      const res = await fetch('/budget-advice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          annualIncome: income,
+          monthlySpending: spending
+        })
+      });
+  
+      const data = await res.json();
+
+      console.log(data);
+  
+      if (data.advice) {
+        const dailySpendingLimit = data.advice.dailySpendingLimit;
+        const recommendedMonthlyInvestment = data.advice.recommendedMonthlyInvestment;
+        const reason = data.advice.reason;
+  
+        financeOutput.innerHTML = `
+          <div class="bg-white/70 rounded-2xl shadow-lg p-8 space-y-6 text-black">
+            <h3 class="text-3xl font-bold text-center">💰 Financial Summary</h3>
+            <p class="text-lg"><strong>📅 Daily Spending Limit:</strong> ${dailySpendingLimit}</p>
+            <p class="text-lg"><strong>📈 Suggested Monthly Investment:</strong> ${recommendedMonthlyInvestment}</p>
+            <p class="text-lg"><strong>💡 Reason:</strong> ${reason}</p>
+          </div>
+        `;
+      } else {
+        financeOutput.innerHTML = `<p class="text-red-600 text-center">❌ No data received. Try again.</p>`;
+      }
+    } catch (error) {
+      console.error(error);
+      financeOutput.innerHTML = `<p class="text-red-600 text-center">❌ Failed to fetch financial suggestion. Try again later.</p>`;
+    }
+  }
+  
